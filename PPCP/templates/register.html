@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h3 class="text-center mb-4 fw-bold">Registro de Personal - Zona 47</h3>
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Nombre Completo</label>
+                    <input type="text" name="nombre" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">RFC</label>
+                    <input type="text" name="rfc" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Contraseña</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Rol en la Zona</label>
+                    <select name="rol" class="form-select" required>
+                        <option value="maestra">Maestra de Grupo</option>
+                        <option value="director">Director(a) de Kínder</option>
+                        <option value="ed_fisica">Profesor de Educación Física</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nombre del Jardín de Niños</label>
+                    <input type="text" name="escuela" class="form-control" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Teléfono (WhatsApp)</label>
+                    <input type="text" name="telefono" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100 py-2 fw-bold">Registrarse</button>
+            </form>
+            <div class="text-center mt-3">
+                <a href="{{ url_for('login') }}" class="small text-decoration-none">¿Ya tienes cuenta? Inicia sesión</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

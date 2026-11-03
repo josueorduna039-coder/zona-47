@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <!-- Columna Izquierda: Opciones de Carga -->
+    <div class="col-md-4 mb-4">
+        {% if session.rol == 'admin' %}
+        <div class="card p-3 mb-4 bg-light border-primary">
+            <h5 class="fw-bold text-primary">📢 Publicar Comunicado General</h5>
+            <form method="POST" action="{{ url_for('announcement') }}">
+                <div class="mb-2">
+                    <input type="text" name="title" class="form-control form-control-sm" placeholder="Título del aviso" required>
+                </div>
+                <div class="mb-2">
+                    <textarea name="content" class="form-control form-control-sm" rows="3" placeholder="Mensaje para todas las escuelas..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm w-100">Publicar Comunicado</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <div class="card p-3 mb-4">
+            <h5 class="fw-bold mb-3">📂 Cargar Archivo PDF</h5>
+            <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">¿Qué información incluye este archivo?</label>
+                    <input type="text" name="category" class="form-control form-control-sm" placeholder="Ej. Pase de lista, Conteo..." required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small">Periodo Escolar</label>
+                    <input type="text" name="period" class="form-control form-control-sm" value="2026-2027" required>
+                </div>
+
+                {% if session.rol == 'admin' %}
+                <input type="hidden" name="visibility" value="all">
+                {% endif %}
+
+                <div class="mb-3">
+                    <label class="form-label small">Seleccionar Archivo (Solo PDF)</label>
+                    <input type="file" name="file" class="form-control form-control-sm" accept=".pdf" required>
+                </div>
+                <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">Subir Documento</button>
+            </form>
+        </div>
+
+        {% if session.rol != 'admin' %}
+        <div class="card p-3">
+            <h5 class="fw-bold mb-3">🖼️ Actualizar Foto de Perfil</h5>
+            <form method="POST" action="{{ url_for('upload_profile_pic') }}" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <input type="file" name="profile_pic" class="form-control form-control-sm" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-outline-primary btn-sm w-100">Cambiar Foto</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Columna Derecha: Buscador de Karina o Tarjetas Personales -->
+    <div class="col-md-8">
+        {% if announcements %}
+        <div class="card p-3 mb-4 bg-white border-start border-4 border-warning">
+            <h5 class="fw-bold text-dark mb-2">📌 Comunicados de la Supervisión</h5>
+            {% for ann in announcements %}
+                <div class="border-bottom pb-2 mb-2">
+                    <h6 class="fw-bold mb-1">{{ ann[0] }} <small class="text-muted fw-normal">({{ ann[2] }})</small></h6>
+                    <p class="small text-secondary mb-0">{{ ann[1] }}</p>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if session.rol == 'admin' %}
+        <!-- Buscador Personalizado por Ciclo, Nombre y RFC -->
+        <div class="card p-3 mb-4">
+            <h5 class="fw-bold mb-3">🔍 Buscar Personal Docente</h5>
+            <form method="GET" action="{{ url_for('dashboard') }}">
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <input type="text" name="nombre" class="form-control form-control-sm" placeholder="Nombre..." value="{{ search_nombre }}">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="rfc" class="form-control form-control-sm" placeholder="RFC..." value="{{ search_rfc }}">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="periodo" class="form-control form-control-sm" placeholder="Ciclo Escolar..." value="{{ search_periodo }}">
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-primary btn-sm w-100" type="submit">Buscar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        {% if users_list %}
+        <div class="card p-3 mb-4">
+            <h5 class="fw-bold mb-3">📋 Resultados de Búsqueda de Personal</h5>
+            <div class="list-group">
+                {% for u in users_list %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>{{ u[1] }}</strong> - <span class="text-muted">RFC: {{ u[2] }} | Tel: {{ u[5] }}</span>
+                    </div>
+                    <a href="{{ url_for('dashboard', view_user_id=u[0], periodo=search_periodo) }}" class="btn btn-outline-primary btn-sm">Ver Perfil</a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if selected_user %}
+        <div class="card p-3 mb-4 border-success">
+            <h5 class="fw-bold text-success mb-3">📁 Expediente de: {{ selected_user[1] }} ({{ selected_user[3] }})</h5>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th>Información / Categoría</th>
+                            <th>Periodo</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for f in user_files %}
+                        <tr>
+                            <td>{{ f[3] }}</td>
+                            <td>{{ f[4] }}</td>
+                            <td>{{ f[5] }}</td>
+                            <td>
+                                <a href="{{ url_for('uploaded_file', filename=f[2]) }}" target="_blank" class="btn btn-outline-primary btn-sm">Ver PDF</a>
+                                <form action="{{ url_for('delete_file', file_id=f[0]) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar este documento?');">Borrar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted">No hay archivos para este ciclo escolar.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        {% endif %}
+
+        <!-- Mis Documentos en Cuadros / Tarjetas con Opción de Borrar -->
+        <div class="card p-3">
+            <h5 class="fw-bold mb-3">📑 Mis Documentos Cargados</h5>
+            <div class="row">
+                {% for f in my_files %}
+                <div class="col-md-6 mb-3">
+                    <div class="card p-3 bg-light border">
+                        <h6 class="fw-bold text-primary mb-1">{{ f[3] }}</h6>
+                        <p class="small text-muted mb-2">Periodo: {{ f[4] }} | Fecha: {{ f[5] }}</p>
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('uploaded_file', filename=f[2]) }}" target="_blank" class="btn btn-outline-primary btn-sm">Ver PDF</a>
+                            <form action="{{ url_for('delete_file', file_id=f[0]) }}" method="POST">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Seguro que deseas borrar este archivo?');">Borrar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12 text-center text-muted py-4">
+                    No has subido ningún documento todavía.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

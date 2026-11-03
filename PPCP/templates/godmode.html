@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card p-4 border-danger">
+            <h3 class="fw-bold text-danger mb-3">🛠️ Panel God Mode - Mantenimiento Técnico (Gerardo)</h3>
+            <p class="text-muted">Este espacio está reservado para ti como desarrollador. Puedes verificar archivos del código fuente o ejecutar comandos directamente.</p>
+            
+            <hr>
+            
+            <h5 class="fw-bold">💻 Ejecutar Comando en Terminal</h5>
+            <form method="POST" action="{{ url_for('run_cmd') }}" class="input-group mb-4">
+                <input type="text" name="command" class="form-control" placeholder="Ej. pip list, python --version..." required>
+                <button class="btn btn-danger" type="submit">Ejecutar</button>
+            </form>
+
+            <h5 class="fw-bold">📂 Archivos del Proyecto en VS Code</h5>
+            <ul class="list-group small">
+                {% for pf in project_files %}
+                <li class="list-group-item">{{ pf }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
