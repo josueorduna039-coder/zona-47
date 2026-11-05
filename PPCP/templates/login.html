@@ -1,22 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row justify-content-center mt-5">
-    <div class="col-md-5">
+<div class="row justify-content-center mt-4">
+    <div class="col-12 col-md-5">
         <div class="card p-4">
-            <h3 class="text-center mb-4 fw-bold text-primary">Iniciar Sesión</h3>
+            <h3 class="text-center mb-4 fw-bold text-primary fs-4">Iniciar Sesión</h3>
             <form method="POST">
                 <div class="mb-3">
-                    <label class="form-label">RFC o Usuario</label>
-                    <input type="text" name="identifier" class="form-control" required placeholder="Ingresa tu RFC o usuario">
+                    <label class="form-label small fw-bold">RFC o Usuario</label>
+                    <input type="text" name="identifier" class="form-control" required placeholder="Ingresa tu RFC, usuario o admin">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Contraseña</label>
-                    <input type="password" name="password" class="form-control" required placeholder="Contraseña">
+                    <label class="form-label small fw-bold">Contraseña</label>
+                    <input type="password" name="password" class="form-control" required placeholder="Contraseña de acceso">
                 </div>
                 <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Entrar al Sistema</button>
             </form>
             <div class="text-center mt-3">
-                <a href="{{ url_for('register') }}" class="small text-decoration-none">¿Nueva maestra? Registrarse aquí</a>
+                <a href="{{ url_for('register') }}" class="small text-decoration-none">¿Nuevo personal? Registrarse aquí</a>
             </div>
         </div>
     </div>
